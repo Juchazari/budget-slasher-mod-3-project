@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Slasher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="resources/css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+</head>
+<body>
+    <section id="dashboard">
+
+        <div id="dashboard-nav">
+            <h1 class="logo">Budget Slasher</h1>
+            <ul>
+                <li><i class="fa fa-home fa-icons" aria-hidden="true"></i>Dashboard</li>
+                <li><i class="fa fa-plus fa-icons" aria-hidden="true"></i>Expenditure List</li>
+            </ul>
+        </div>
+
+        <div id="dashboard-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="some-card">
+                            <div class="some-card-header">
+                                <h3>Your Budget</h3>
+                            </div>
+                            <div class="some-card-content">
+                                <p>$2000</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="some-card">
+                            <div class="some-card-header">
+                                <h3>Monthly Spending</h3>
+                            </div>
+                            <div class="some-card-content">
+                                <p>$1450</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="some-card">
+                            <div class="some-card-header">
+                                <h3>Spending Categories</h3>
+                            </div>
+                            <div class="some-card-content">
+                                <p>7</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="some-card-large">
+                            <canvas id="myChart" style="display: block; height: 100%; width: 100%;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script src="resources/js/index.js"></script>
+</body>
+</html>
