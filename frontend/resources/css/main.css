@@ -15,6 +15,9 @@ body {
     background-color: #f1f1f7;
 }
 
+#dashboard {
+}
+
 #dashboard-nav {
     width: 260px;
     height: 100vh;
@@ -99,4 +102,20 @@ body {
     box-shadow: 0px 0px 13px 0px rgba(82, 63, 105, 0.05);
     border-radius: 5px;
     padding: 15px;
+}
+
+
+/* Expenditure List */
+#dashboard-content .some-card-large {
+    display: flex;
+}
+
+#dashboard-content .left-list-info {
+    width: 50%;
+    height: 100%;
+}
+
+#dashboard-content .right-graph-graphic {
+    width: 50%;
+    height: 100%;
 }
