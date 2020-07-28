@@ -3,4 +3,8 @@ class ExpendituresController < ApplicationController
         expenditures = Expenditure.all
         render json: expenditures
     end
+
+    def destroy
+        Expenditure.find(params[:id]).destroy
+    end
 end
