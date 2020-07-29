@@ -1,14 +1,116 @@
 const USERS_URL = "http://localhost:3000/users";
 const LISTS_URL = "http://localhost:3000/lists";
 const EXPEND_URL = "http://localhost:3000/expenditures";
+let current_user;
 
 document.addEventListener("DOMContentLoaded", () => {
 
     fetch(USERS_URL)
         .then((res) => res.json())
-        .then((json) => getUserData(json[0]))
+        .then((json) => {
+            current_user = json[0];
+            getUserData(json[0])
+        })
+
+    
+    
+    const addListBtn = document.getElementById("add-list-btn")
+    addListBtn.addEventListener("click", () => {
+        const list = {
+            "category": "New List",
+            "id": "",
+            "expenditures": []
+        }
+
+        renderCardList(list)
+
+        fetch(LISTS_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json"
+            },
+            body: JSON.stringify({
+                "category": "New List",
+                "user": current_user.id
+            })
+        }).then(resp => resp.json()).then(json => console.log(json))
+    })
+
+    // When Add new item btn is clicked
+    document.addEventListener("click", (e) => {
+        if(e.target.matches("#add-item-btn")) {
+            addNewItem(e.target)
+        }
+    })
+
+    //on delete button click
+    document.addEventListener("click", (e) => {
+        if(e.target.matches("#item-delete-btn")) {
+            const tr = e.target.parentNode.parentNode.parentNode;
+            deleteListItem(tr, e.target)
+        }
+    })
+
+    const debounce = (fn, delay) => {
+        let timeoutID;
+        return function(...args) {
+            if(timeoutID) {
+                clearTimeout(timeoutID);
+            }
+            timeoutID = setTimeout(() => {
+                fn(...args);
+            }, delay)
+        }
+    }
+
+    document.addEventListener("input", debounce(e =>{
+        if(e.target.matches("td")) {
+            const newText = e.target.innerText;
+            const item = e.target.parentNode;
+
+            updateItem(newText, item)
+        }
+        if(e.target.matches("h3#list-cate-name")) {
+            const listId = e.target.parentNode.parentNode.parentNode.getAttribute("list-id")
+            const newCateName = e.target.innerText
+            updateListName(listId, newCateName)
+        }
+    }, 800))
 
 });
+
+function updateListName(id, newName){
+    fetch(`${LISTS_URL}/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify({"category": newName})
+    })
+}
+
+function updateItem(newText, item) {
+    const id = item.getAttribute("expense-id")
+
+    let price = item.children[1].innerText.replace("$", "")
+    
+    const itemUpdate = {
+        "name": item.children[0].innerText,
+        "price": price,
+        "deadline": item.children[2].innerText
+    }
+
+    fetch(`${EXPEND_URL}/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify(itemUpdate)
+    })
+}
 
 function getUserData(userData) {
     userData.lists.forEach(list => {
@@ -17,28 +119,32 @@ function getUserData(userData) {
 }
 
 function renderCardList(list) {
-    console.log(list)
-    const content = document.querySelector("#dashboard-content > .container")
-    const divRow = document.createElement('div')
-    divRow.className = "row"
+    const dashboard = document.querySelector("#dashboard-content > .container");
+    const cardContainer = document.createElement('div');
 
-    divRow.innerHTML = `
+    cardContainer.className = "row"
+
+    cardContainer.innerHTML = `
         <div class="col-md-12">
-            <div class="card-njs card-lg-expe">
+            <div class="card-njs card-lg-expe" list-id=${list.id}>
+                <i id="list-delete-btn" class="fa fa-close" data-id="${list.id}"></i>
                 <div class="card-exp-left">
                     <div class="cardexp-header">
-                        <h3>${list.category}</h3>
-                        <button id="list-delete-btn" data-id="${list.id}" class="btn btn-danger">Delete</button>
+                        <h3 id="list-cate-name" contenteditable="true">${list.category}</h3>
                     </div>
                     <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th scope="col">Expenditure</th>
                                 <th scope="col">Price</th>
-                                <th scope="col">Pay Day</th>
+                                <th class="text-center" scope="col">Pay Day</th>
+                                <th class="text-center" scope="col" >
+                                    <i id="add-item-btn" class="fa fa-plus" data-id="${list.id}" aria-hidden="true"></i>
+                                </th>
                             </tr>
                         </thead>
-                        <tbody class="table_body">
+                        <tbody id="table-body" table-id="${list.id}">
+
                         </tbody>
                     </table>
                 </div>
@@ -51,38 +157,85 @@ function renderCardList(list) {
         </div>
     `;
 
-    const listDeleteBtn = divRow.querySelector("#list-delete-btn");
-    listDeleteBtn.addEventListener("click", () => deleteList(divRow, listDeleteBtn));
+    const listDeleteBtn = cardContainer.querySelector("#list-delete-btn");
+    listDeleteBtn.addEventListener("click", () => deleteListCard(cardContainer, listDeleteBtn));
 
     list.expenditures.forEach(expenditure => {
-        const divRowTb = divRow.querySelector(".table_body")
+        const tableBody = cardContainer.querySelector("#table-body")
         const tr = document.createElement("tr");
+        tr.setAttribute("expense-id", expenditure.id)
+
+        const empty = " ";
+        if (expenditure.deadline === null ){
+            expenditure.deadline = empty}
+
+        if (expenditure.name === null){
+            expenditure.name = empty}
+
+        if (expenditure.price === null){
+            expenditure.price = empty}
+            
         tr.innerHTML = `
             <td class="pt-3-half" contenteditable="true" >${expenditure.name}</td>
             <td class="pt-3-half" contenteditable="true" >$ ${expenditure.price}</td>
-            <td class="pt-3-half" contenteditable="true" >${expenditure.deadline}</td>
-            <td>
+            <td class="text-center" class="pt-3-half" contenteditable="true" >${expenditure.deadline}</td>
+            <td class="text-center">
                 <span class="table-remove">
-                    <button id="item-remove-btn" data-id="${expenditure.id}" type="button"class="btn btn-danger btn-rounded btn-sm my-0">
-                        Remove
-                    </button>
+                        <i id="item-delete-btn" class="fa fa-minus" aria-hidden="true" expenditure-id="${expenditure.id}"></i>
                 </span>
             </td>
         `;
 
-        divRowTb.appendChild(tr);
-        
-        const itemDeleteBtn = tr.querySelector("#item-remove-btn")
-        itemDeleteBtn.addEventListener("click", () => deleteItem(tr,itemDeleteBtn, expenditure))
+        tableBody.appendChild(tr);
+
     });
 
-    createChart(list, divRow)
+    renderChart(list, cardContainer)
 
-    content.appendChild(divRow);
+    dashboard.appendChild(cardContainer);
 }
 
-function deleteItem(item, btn, expenditure) {
+function addNewItem(btn){
     const id = btn.getAttribute("data-id")
+    const table = document.querySelector(`tbody[table-id="${id}"]`)
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+        <td class="pt-3-half" contenteditable="true" > </td>
+        <td class="pt-3-half" contenteditable="true" > $ </td>
+        <td class="text-center" class="pt-3-half" contenteditable="true" >  </td>
+
+        <td class="text-center">
+            <span class="table-remove">
+                    <i id="item-delete-btn" class="fa fa-minus" aria-hidden="true"> </i>
+            </span>
+        </td>
+    `;
+
+    table.appendChild(tr);
+    
+    fetch(EXPEND_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+
+        body: JSON.stringify({"list": id})
+    }).then(resp => resp.json())
+      .then(json => {
+
+        const expId = json.id
+        const deleteBtn = tr.querySelector("#item-delete-btn");
+
+        deleteBtn.setAttribute("expenditure-id", expId);
+        tr.setAttribute("expense-id", expId)
+    })
+}
+
+
+function deleteListItem(item, btn) {
+    const id = btn.getAttribute("expenditure-id")
     item.remove();
 
     fetch(`${EXPEND_URL}/${id}`, {
@@ -94,22 +247,20 @@ function deleteItem(item, btn, expenditure) {
     })
 }
 
-function deleteList(list, btn) {
+function deleteListCard(list, btn) {
     const id = btn.getAttribute("data-id")
     list.remove();
 
-    fetch(`${LISTS_URL}/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    })
-
+    // fetch(`${LISTS_URL}/${id}`, {
+    //     method: "DELETE",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         "Accept": "application/json"
+    //     }
+    // })
 }
 
-function createChart(list, divRow) {
-    
+function renderChart(list, cardContainer) {
     let labels = [];
     let data = [];
 
@@ -118,7 +269,7 @@ function createChart(list, divRow) {
         data.push(expenditure.price)
     })
 
-    const canvas = divRow.querySelector("canvas")
+    const canvas = cardContainer.querySelector("canvas")
     const newChart = new Chart(canvas, {
         type: 'pie',
         data: {
@@ -166,5 +317,4 @@ function createChart(list, divRow) {
         });
         newChart.update();
     }, 200);
-
 }

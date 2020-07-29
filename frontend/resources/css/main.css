@@ -40,6 +40,14 @@
     background-color: #171a1d;
 }
 
+#navbar .nested-list {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    background-color: #1d222e;
+    padding-left: 25px;
+}
+
 
 /* DASHBOARD HOME PAGE */
 #dashboard-content {
@@ -99,17 +107,44 @@
 
 #dashboard-content .cardexp-header {
     display: flex;
+    justify-content: space-between;
+}
+
+#dashboard-content .cardexp-header .big-btn {
+    display: flex;
 }
 
 #dashboard-content .cardexp-header i {
-    padding: 2px 0px 0px 10px;
     cursor: pointer;
 }
 
 #dashboard-content .cardexp-header h3 {
     font-size: 18px;
     font-weight: 400;
-    padding: 0rem .75rem .75rem .75rem;
+    padding: .5rem .75rem;
+}
+
+#list-delete-btn {
+    position: absolute;
+    right: 0;
+    margin-right: 34px;
+    cursor: pointer;
+}
+
+#add-item-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#add-item-btn {
+    color:  rgba(75, 192, 192, 0.8);
+    cursor: pointer;
+}
+
+#dashboard-content #item-delete-btn {
+    color: rgba(255, 99, 132, 0.8);
+    cursor: pointer;
 }
 
 #dashboard-content .card-exp-left {
