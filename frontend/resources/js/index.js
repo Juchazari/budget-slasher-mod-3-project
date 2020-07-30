@@ -14,28 +14,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     
     
-    const addListBtn = document.getElementById("add-list-btn")
-    addListBtn.addEventListener("click", () => {
-        const list = {
-            "category": "New List",
-            "id": "",
-            "expenditures": []
-        }
+    // const addListBtn = document.getElementById("add-list-btn")
+    // addListBtn.addEventListener("click", () => {
+    //     const list = {
+    //         "category": "New List",
+    //         "id": "",
+    //         "expenditures": []
+    //     }
 
-        renderCardList(list)
+    //     renderCardList(list)
 
-        fetch(LISTS_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json"
-            },
-            body: JSON.stringify({
-                "category": "New List",
-                "user": current_user.id
-            })
-        }).then(resp => resp.json()).then(json => console.log(json))
-    })
+    //     fetch(LISTS_URL, {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             Accept: "application/json"
+    //         },
+    //         body: JSON.stringify({
+    //             "category": "New List",
+    //             "user": current_user.id
+    //         })
+    //     }).then(resp => resp.json()).then(json => console.log(json))
+    // })
 
     // When Add new item btn is clicked
     document.addEventListener("click", (e) => {
@@ -71,8 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             updateItem(newText, item)
         }
-        if(e.target.matches("h3#list-cate-name")) {
-            const listId = e.target.parentNode.parentNode.parentNode.getAttribute("list-id")
+        if(e.target.matches("h3#list-name")) {
+            const listId = e.target.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("list-id")
             const newCateName = e.target.innerText
             updateListName(listId, newCateName)
         }
@@ -123,34 +123,37 @@ function renderCardList(list) {
     const cardContainer = document.createElement('div');
 
     cardContainer.className = "row"
-
     cardContainer.innerHTML = `
         <div class="col-md-12">
-            <div class="card-njs card-lg-expe" list-id=${list.id}>
-                <i id="list-delete-btn" class="fa fa-close" data-id="${list.id}"></i>
-                <div class="card-exp-left">
-                    <div class="cardexp-header">
-                        <h3 id="list-cate-name" contenteditable="true">${list.category}</h3>
-                    </div>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col">Expenditure</th>
-                                <th scope="col">Price</th>
-                                <th class="text-center" scope="col">Pay Day</th>
-                                <th class="text-center" scope="col" >
-                                    <i id="add-item-btn" class="fa fa-plus" data-id="${list.id}" aria-hidden="true"></i>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body" table-id="${list.id}">
+            <div id="card-list" list-id=${list.id}>
+                <i id="list-delete-btn" class="fa fa-close delete-list-btn" data-id="${list.id}"></i>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card-list-header">
+                                <h3 id="list-name" contenteditable="true">${list.category}</h3>
+                            </div>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Expenditure</th>
+                                        <th scope="col">Price</th>
+                                        <th class="text-center" scope="col">Pay Day</th>
+                                        <th class="text-center" scope="col" >
+                                            <i id="add-item-btn" class="fa fa-plus add-table-item-btn" data-id="${list.id}" aria-hidden="true"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body" table-id="${list.id}">
 
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-exp-right">
-                    <div id="chart-container" class="center-chart">
-                        <canvas id=${list.id} style="display: block; height: 100%; width: 100%;"></canvas>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="chart-container">
+                                <canvas id=${list.id} style="display: block; width: 100%; height: 100%;"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -181,7 +184,7 @@ function renderCardList(list) {
             <td class="text-center" class="pt-3-half" contenteditable="true" >${expenditure.deadline}</td>
             <td class="text-center">
                 <span class="table-remove">
-                        <i id="item-delete-btn" class="fa fa-minus" aria-hidden="true" expenditure-id="${expenditure.id}"></i>
+                        <i id="item-delete-btn" class="fa fa-minus delete-table-item-btn" aria-hidden="true" expenditure-id="${expenditure.id}"></i>
                 </span>
             </td>
         `;
@@ -251,13 +254,13 @@ function deleteListCard(list, btn) {
     const id = btn.getAttribute("data-id")
     list.remove();
 
-    // fetch(`${LISTS_URL}/${id}`, {
-    //     method: "DELETE",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //         "Accept": "application/json"
-    //     }
-    // })
+    fetch(`${LISTS_URL}/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+    })
 }
 
 function renderChart(list, cardContainer) {
