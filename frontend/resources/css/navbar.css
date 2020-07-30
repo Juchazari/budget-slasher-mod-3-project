@@ -1,0 +1,44 @@
+#navbar {
+    width: 260px;
+    height: 100vh;
+    background-color: #242939; /* #202429; */
+    color: white;
+    position: fixed;
+    z-index: 1000;
+}
+
+#navbar .logo {
+    font-size: 25px;
+    text-transform: uppercase;
+    margin: 20px 0px 50px 15px;
+}
+
+#navbar .fa-icons {
+    margin-right: 15px;
+    color: #2681f7;
+    width: 10px;
+}
+
+#navbar .navbar-nav {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#navbar .navbar-nav li {
+    font-weight: 300;
+    cursor: pointer;
+    padding: 15px 15px;
+}
+
+#navbar .navbar-nav li:hover {
+    background-color: #171a1d;
+}
+
+#navbar .navbar-nav-nested {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    background-color: #1d222e;
+    padding-left: 25px;
+}
