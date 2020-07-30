@@ -1,326 +1,80 @@
-const USERS_URL = "http://localhost:3000/users";
-const LISTS_URL = "http://localhost:3000/lists";
-const EXPEND_URL = "http://localhost:3000/expenditures";
-let current_user;
+// const USERS_URL = "http://localhost:3000/users";
+// let current_user;
 
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
+//     const loginForm = document.querySelector("#login-form");
+//     loginForm.addEventListener("submit", (e) => {
+//         e.preventDefault()
+//         const username = e.target.username.value;
+//         checkUser(username);
+//         loginForm.reset()
+//     });
+// }); 
 
-    fetch(USERS_URL)
-        .then((res) => res.json())
-        .then((json) => {
-            current_user = json[0];
-            getUserData(json[0])
-        })
+// function checkUser(username) {
+//     fetch(USERS_URL)
+//         .then(resp => resp.json())
+//         .then(users => {
 
-    
-    
-    // const addListBtn = document.getElementById("add-list-btn")
-    // addListBtn.addEventListener("click", () => {
-    //     const list = {
-    //         "category": "New List",
-    //         "id": "",
-    //         "expenditures": []
-    //     }
+//             users.forEach(user => {
+//                 if(user.username === username) {
+//                     current_user = user;
+//                     loginUser()
+//                 } else {
+//                     console.log("Goodbye Stranger!")
+//                 }
+//             })
 
-    //     renderCardList(list)
+//         })
+// }
 
-    //     fetch(LISTS_URL, {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             Accept: "application/json"
-    //         },
-    //         body: JSON.stringify({
-    //             "category": "New List",
-    //             "user": current_user.id
-    //         })
-    //     }).then(resp => resp.json()).then(json => console.log(json))
-    // })
+// function loginUser() {
+//     document.querySelector("#login").style.display = "none"
+//     home()
+// }
 
-    // When Add new item btn is clicked
-    document.addEventListener("click", (e) => {
-        if(e.target.matches("#add-item-btn")) {
-            addNewItem(e.target)
-        }
-    })
+// function home() {
+//     const dashboard = document.querySelector("#dashboard-content > .container")
+//     dashboard.innerHTML = `
+//         <div class="row">
+//             <div class="col-lg-4">
+//                 <div class="card-njs card-sm">
+//                     <div class="card-sm-header">
+//                         <h3>Your Budget</h3>
+//                     </div>
+//                     <div class="card-sm-content">
+//                         <p>$2000</p>
+//                     </div>
+//                 </div>
+//             </div>
+//             <div class="col-lg-4">
+//                 <div class="card-njs card-sm">
+//                     <div class="card-sm-header">
+//                         <h3>Monthly Spending</h3>
+//                     </div>
+//                     <div class="card-sm-content">
+//                         <p>$1450</p>
+//                     </div>
+//                 </div>
+//             </div>
+//             <div class="col-lg-4">
+//                 <div class="card-njs card-sm">
+//                     <div class="card-sm-header">
+//                         <h3>Spending Categories</h3>
+//                     </div>
+//                     <div class="card-sm-content">
+//                         <p>7</p>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
 
-    //on delete button click
-    document.addEventListener("click", (e) => {
-        if(e.target.matches("#item-delete-btn")) {
-            const tr = e.target.parentNode.parentNode.parentNode;
-            deleteListItem(tr, e.target)
-        }
-    })
-
-    const debounce = (fn, delay) => {
-        let timeoutID;
-        return function(...args) {
-            if(timeoutID) {
-                clearTimeout(timeoutID);
-            }
-            timeoutID = setTimeout(() => {
-                fn(...args);
-            }, delay)
-        }
-    }
-
-    document.addEventListener("input", debounce(e =>{
-        if(e.target.matches("td")) {
-            const newText = e.target.innerText;
-            const item = e.target.parentNode;
-
-            updateItem(newText, item)
-        }
-        if(e.target.matches("h3#list-name")) {
-            const listId = e.target.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("list-id")
-            const newCateName = e.target.innerText
-            updateListName(listId, newCateName)
-        }
-    }, 800))
-
-});
-
-function updateListName(id, newName){
-    fetch(`${LISTS_URL}/${id}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json"
-        },
-        body: JSON.stringify({"category": newName})
-    })
-}
-
-function updateItem(newText, item) {
-    const id = item.getAttribute("expense-id")
-
-    let price = item.children[1].innerText.replace("$", "")
-    
-    const itemUpdate = {
-        "name": item.children[0].innerText,
-        "price": price,
-        "deadline": item.children[2].innerText
-    }
-
-    fetch(`${EXPEND_URL}/${id}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json"
-        },
-        body: JSON.stringify(itemUpdate)
-    })
-}
-
-function getUserData(userData) {
-    userData.lists.forEach(list => {
-        renderCardList(list)
-    });
-}
-
-function renderCardList(list) {
-    const dashboard = document.querySelector("#dashboard-content > .container");
-    const cardContainer = document.createElement('div');
-
-    cardContainer.className = "row"
-    cardContainer.innerHTML = `
-        <div class="col-md-12">
-            <div id="card-list" list-id=${list.id}>
-                <i id="list-delete-btn" class="fa fa-close delete-list-btn" data-id="${list.id}"></i>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="card-list-header">
-                                <h3 id="list-name" contenteditable="true">${list.category}</h3>
-                            </div>
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Expenditure</th>
-                                        <th scope="col">Price</th>
-                                        <th class="text-center" scope="col">Pay Day</th>
-                                        <th class="text-center" scope="col" >
-                                            <i id="add-item-btn" class="fa fa-plus add-table-item-btn" data-id="${list.id}" aria-hidden="true"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-body" table-id="${list.id}">
-
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="chart-container">
-                                <canvas id=${list.id} style="display: block; width: 100%; height: 100%;"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    const listDeleteBtn = cardContainer.querySelector("#list-delete-btn");
-    listDeleteBtn.addEventListener("click", () => deleteListCard(cardContainer, listDeleteBtn));
-
-    list.expenditures.forEach(expenditure => {
-        const tableBody = cardContainer.querySelector("#table-body")
-        const tr = document.createElement("tr");
-        tr.setAttribute("expense-id", expenditure.id)
-
-        const empty = " ";
-        if (expenditure.deadline === null ){
-            expenditure.deadline = empty}
-
-        if (expenditure.name === null){
-            expenditure.name = empty}
-
-        if (expenditure.price === null){
-            expenditure.price = empty}
-            
-        tr.innerHTML = `
-            <td class="pt-3-half" contenteditable="true" >${expenditure.name}</td>
-            <td class="pt-3-half" contenteditable="true" >$ ${expenditure.price}</td>
-            <td class="text-center" class="pt-3-half" contenteditable="true" >${expenditure.deadline}</td>
-            <td class="text-center">
-                <span class="table-remove">
-                        <i id="item-delete-btn" class="fa fa-minus delete-table-item-btn" aria-hidden="true" expenditure-id="${expenditure.id}"></i>
-                </span>
-            </td>
-        `;
-
-        tableBody.appendChild(tr);
-
-    });
-
-    renderChart(list, cardContainer)
-
-    dashboard.appendChild(cardContainer);
-}
-
-function addNewItem(btn){
-    const id = btn.getAttribute("data-id")
-    const table = document.querySelector(`tbody[table-id="${id}"]`)
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-        <td class="pt-3-half" contenteditable="true" > </td>
-        <td class="pt-3-half" contenteditable="true" > $ </td>
-        <td class="text-center" class="pt-3-half" contenteditable="true" >  </td>
-
-        <td class="text-center">
-            <span class="table-remove">
-                    <i id="item-delete-btn" class="fa fa-minus delete-table-item-btn" aria-hidden="true"> </i>
-            </span>
-        </td>
-    `;
-
-    table.appendChild(tr);
-    
-    fetch(EXPEND_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json"
-        },
-
-        body: JSON.stringify({"list": id})
-    }).then(resp => resp.json())
-      .then(json => {
-
-        const expId = json.id
-        const deleteBtn = tr.querySelector("#item-delete-btn");
-
-        deleteBtn.setAttribute("expenditure-id", expId);
-        deleteBtn.style.cssText = "background-color: blue;"
-        console.log(deleteBtn)
-        tr.setAttribute("expense-id", expId)
-        tr.sstyle.cssText = "background-color: green;"
-    })
-}
-
-
-function deleteListItem(item, btn) {
-    const id = btn.getAttribute("expenditure-id")
-    item.remove();
-
-    fetch(`${EXPEND_URL}/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    })
-}
-
-function deleteListCard(list, btn) {
-    const id = btn.getAttribute("data-id")
-    list.remove();
-
-    fetch(`${LISTS_URL}/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    })
-}
-
-function renderChart(list, cardContainer) {
-    let labels = [];
-    let data = [];
-
-    list.expenditures.forEach(expenditure => {
-        labels.push(expenditure.name)
-        data.push(expenditure.price)
-    })
-
-    const canvas = cardContainer.querySelector("canvas")
-    const newChart = new Chart(canvas, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: list.category,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.5)',
-                    'rgba(54, 162, 235, 0.5)',
-                    'rgba(255, 206, 86, 0.5)',
-                    'rgba(75, 192, 192, 0.5)',
-                    'rgba(153, 102, 255, 0.5)',
-                    'rgba(153, 12, 29, 0.5)',
-                    'rgba(131, 255, 60, 0.5)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                xAxes: [{
-                    gridLines: {
-                        display: false
-                    },
-                    ticks: {
-                        display: false
-                    }
-                }],
-                yAxes: [{
-                    gridLines: {
-                        display: false
-                    },
-                    ticks: {
-                        display: false
-                    }
-                }]
-            }
-        }
-    });
-
-    setTimeout(function () {
-        newChart.data.datasets.forEach((dataset) => {
-            dataset.data = data
-        });
-        newChart.update();
-    }, 200);
-}
+//         <div class="row">
+//             <div class="col-md-12">
+//                 <div class="card-njs card-lg-home">
+//                     <canvas id="myChart" style="display: block; height: 100%; width: 100%;"></canvas>
+//                 </div>
+//             </div>
+//         </div>
+//     `;
+// }
