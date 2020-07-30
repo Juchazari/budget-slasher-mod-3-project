@@ -210,7 +210,7 @@ function addNewItem(btn){
 
         <td class="text-center">
             <span class="table-remove">
-                    <i id="item-delete-btn" class="fa fa-minus" aria-hidden="true"> </i>
+                    <i id="item-delete-btn" class="fa fa-minus delete-table-item-btn" aria-hidden="true"> </i>
             </span>
         </td>
     `;
@@ -232,7 +232,10 @@ function addNewItem(btn){
         const deleteBtn = tr.querySelector("#item-delete-btn");
 
         deleteBtn.setAttribute("expenditure-id", expId);
+        deleteBtn.style.cssText = "background-color: blue;"
+        console.log(deleteBtn)
         tr.setAttribute("expense-id", expId)
+        tr.sstyle.cssText = "background-color: green;"
     })
 }
 
