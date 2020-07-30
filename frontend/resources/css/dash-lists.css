@@ -7,6 +7,11 @@
     margin-bottom: 30px;
 }
 
+#card-list .card-list-header {
+    display: flex;
+    justify-content: space-between;
+}
+
 #card-list .card-list-header h3 {
     font-size: 18px;
     font-weight: 400;

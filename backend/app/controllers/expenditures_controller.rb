@@ -5,9 +5,9 @@ class ExpendituresController < ApplicationController
     end
 
     def create
-        list = List.find(params[:list])
-        item = Expenditure.create({list: list})
-        render json: item
+        list1 = List.find(params[:list])
+        item1 = Expenditure.create({list_id: list1.id})
+        render json: item1
     end
 
     def update
