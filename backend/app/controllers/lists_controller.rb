@@ -7,6 +7,7 @@ class ListsController < ApplicationController
     def update
         list = List.find(params[:id])
         list.update(list_params)
+        render json: list
     end
 
     def create
@@ -22,6 +23,6 @@ class ListsController < ApplicationController
     private
 
         def list_params
-            params.require(:list).permit(:category, :budget)
+            params.require(:list).permit(:category, :budget, :total)
         end
 end
