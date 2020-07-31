@@ -34,7 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
             })
         }).then(resp => resp.json()).then(json => {
             renderCardList(json)
-        }).then(calcTotalList())
+            calcTotalLists()
+        })
     })
 
     // Add Table Item
@@ -50,10 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
             deleteListItem(tr, e.target)
         }
     })
-<<<<<<< HEAD
-//editing
-=======
->>>>>>> 149f5ef73a00aaa0d816068ff78b7454861c8214
     const debounce = (fn, delay) => {
         let timeoutID;
         return function(...args) {
@@ -65,11 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, delay)
         }
     }
-<<<<<<< HEAD
-//see if the person is typing
-=======
     // Update table input text
->>>>>>> 149f5ef73a00aaa0d816068ff78b7454861c8214
     document.addEventListener("input", debounce(e =>{
         if(e.target.matches("td")) {
             const newText = e.target.innerText;
@@ -234,7 +227,7 @@ function renderCardList(list) {
     `;
 
     const listDeleteBtn = cardContainer.querySelector("#list-delete-btn");
-    listDeleteBtn.addEventListener("click", () => deleteListCard(cardContainer, listDeleteBtn));
+    listDeleteBtn.addEventListener("click", () => deleteListModal(cardContainer, listDeleteBtn));
     let total = 0.0;
     
     list.expenditures.forEach(expenditure => {
@@ -380,6 +373,23 @@ function deleteListItem(item, btn) {
     }).then(calcTotalSpent())
 }
 
+function deleteListModal(list, btn) {
+    const modalBg = document.querySelector('.modal-bg');
+    const modalCloseBtn = document.querySelector(".modal-close-btn");
+    const modalContinueBtn = document.querySelector(".modal-continue-btn")
+
+    modalBg.classList.add("modal-bg-active")
+
+    modalCloseBtn.addEventListener("click", () => {
+        modalBg.classList.remove("modal-bg-active")
+    });
+
+    modalContinueBtn.addEventListener("click", () => {
+        deleteListCard(list, btn)
+        modalBg.classList.remove("modal-bg-active")
+    })
+}
+
 function deleteListCard(list, btn) {
     const id = btn.getAttribute("list-id")
     list.remove();
@@ -390,7 +400,7 @@ function deleteListCard(list, btn) {
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
-    }).then(calcTotalList())
+    }).then(()  => calcTotalLists())
 }
 
 function renderChart(list, cardContainer) {
