@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 
 <head>
     <meta charset="UTF-8">
@@ -13,24 +13,31 @@
 </head>
 
 <body>
-    <!-- <section id="login">
-        <form id="login-form">
-            <h2>TYPE USERNAME</h2>
-            <input type="text" name="username"/>
-            <input type="submit">
-        </form>
-    </section> -->
 
     <nav id="navbar">
-        <h1 class="logo">Budget Slasher</h1>
-        <ul class="navbar-nav">
-            <li id="dash-home"><i class="fa fa-home fa-icons" aria-hidden="true"></i>Dashboard</li>
-            <li id="dash-lists"><i class="fa fa-plus fa-icons" aria-hidden="true"></i>Expenditure List
-                <ul class="navbar-nav-nested">
-                    <li id="add-list-btn">Add List</li>
-                </ul>
-            </li>
-        </ul>
+        <div class="nav-header">
+            <h1 class="logo"> Budget Slasher </h1>
+        </div>
+
+        <div class="nav-cards-container">
+            <div id ="all-budget" class="nav-card">
+                <p>Set Budget: $3000</p>
+            </div>
+    
+            <div id = "all-total" class="nav-card">
+                <p></p>
+            </div>
+    
+            <div id="all-lists" class="nav-card">
+                <p>Total Lists: 3</p>
+            </div>
+        </div>
+
+        <div class="nav-footer">
+            <div id="add-list-btn" class="btn btn-primary new-list-btn"><i class="fa fa-plus fa-icons" aria-hidden="true"></i>New List</div>
+        </div>
+
+        
     </nav>
 
     <main id="dashboard-content">
@@ -39,8 +46,7 @@
         </div>
     </main>
 
-    <script src="resources/js/index-1.js"></script>
-    <!-- <script src="resources/js/home.js"></script> -->
+    <script src="resources/js/index.js"></script>
 </body>
 
 </html>
