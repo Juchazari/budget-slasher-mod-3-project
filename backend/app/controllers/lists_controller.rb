@@ -10,9 +10,9 @@ class ListsController < ApplicationController
     end
 
     def create
-        user = User.find(params[:user])
-        list = List.create(category: params[:category], user: user)
-        render json: list
+        user = User.find(params[:user_id])
+        list = List.create(category: params[:category], budget: params[:budget], user_id: user.id)
+        render json: list, include: :expenditures
     end
 
     def destroy
@@ -22,6 +22,6 @@ class ListsController < ApplicationController
     private
 
         def list_params
-            params.require(:list).permit(:category)
+            params.require(:list).permit(:category, :budget)
         end
 end

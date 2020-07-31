@@ -16,20 +16,18 @@ ActiveRecord::Schema.define(version: 2020_07_27_184027) do
     t.string "name"
     t.float "price"
     t.date "deadline"
-    t.integer "list_id", null: false
+    t.integer "list_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["list_id"], name: "index_expenditures_on_list_id"
   end
 
   create_table "lists", force: :cascade do |t|
     t.string "category"
     t.float "budget"
     t.float "total"
-    t.integer "user_id", null: false
+    t.integer "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_lists_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -40,6 +38,4 @@ ActiveRecord::Schema.define(version: 2020_07_27_184027) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "expenditures", "lists"
-  add_foreign_key "lists", "users"
 end

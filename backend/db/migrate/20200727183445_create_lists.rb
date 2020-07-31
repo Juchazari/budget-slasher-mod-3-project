@@ -4,8 +4,7 @@ class CreateLists < ActiveRecord::Migration[6.0]
       t.string :category
       t.float :budget
       t.float :total
-      t.references :user, null: false, foreign_key: true
-
+      t.integer :user_id
       t.timestamps
     end
   end

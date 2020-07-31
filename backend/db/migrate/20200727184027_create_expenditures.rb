@@ -4,7 +4,7 @@ class CreateExpenditures < ActiveRecord::Migration[6.0]
       t.string :name
       t.float :price
       t.date :deadline
-      t.references :list, null: false, foreign_key: true
+      t.integer :list_id
 
       t.timestamps
     end

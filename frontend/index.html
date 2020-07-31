@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 
 <head>
     <meta charset="UTF-8">
@@ -13,60 +13,36 @@
 </head>
 
 <body>
+
     <nav id="navbar">
-        <h1 class="logo">Budget Slasher</h1>
-        <ul class="navbar-nav">
-            <li id="dash-home"><i class="fa fa-home fa-icons" aria-hidden="true"></i>Dashboard</li>
-            <li id="dash-lists"><i class="fa fa-plus fa-icons" aria-hidden="true"></i>Expenditure List
-                <!-- <ul class="navbar-nav-nested">
-                    <li id="add-list-btn">Add List</li>
-                </ul> -->
-            </li>
-        </ul>
+        <div class="nav-header">
+            <h1 class="logo"> Budget Slasher </h1>
+        </div>
+
+        <div class="nav-cards-container">
+            <div id ="all-budget" class="nav-card">
+                <p>Set Budget: $3000</p>
+            </div>
+    
+            <div id = "all-total" class="nav-card">
+                <p></p>
+            </div>
+    
+            <div id="all-lists" class="nav-card">
+                <p>Total Lists: 3</p>
+            </div>
+        </div>
+
+        <div class="nav-footer">
+            <div id="add-list-btn" class="btn btn-primary new-list-btn"><i class="fa fa-plus fa-icons" aria-hidden="true"></i>New List</div>
+        </div>
+
+        
     </nav>
 
     <main id="dashboard-content">
         <div class="container">
-            <!-- <div class="row">
-                <div class="col-lg-4">
-                    <div class="card-njs card-sm">
-                        <div class="card-sm-header">
-                            <h3>Your Budget</h3>
-                        </div>
-                        <div class="card-sm-content">
-                            <p>$2000</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card-njs card-sm">
-                        <div class="card-sm-header">
-                            <h3>Monthly Spending</h3>
-                        </div>
-                        <div class="card-sm-content">
-                            <p>$1450</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card-njs card-sm">
-                        <div class="card-sm-header">
-                            <h3>Spending Categories</h3>
-                        </div>
-                        <div class="card-sm-content">
-                            <p>7</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card-njs card-lg-home">
-                        <canvas id="myChart" style="display: block; height: 100%; width: 100%;"></canvas>
-                    </div>
-                </div>
-            </div> -->
+            
         </div>
     </main>
 
