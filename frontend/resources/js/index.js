@@ -49,10 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
             deleteListItem(tr, e.target)
         }
     })
-<<<<<<< HEAD
 //editing
-=======
->>>>>>> 149f5ef73a00aaa0d816068ff78b7454861c8214
     const debounce = (fn, delay) => {
         let timeoutID;
         return function(...args) {
@@ -64,11 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, delay)
         }
     }
-<<<<<<< HEAD
 //see if the person is typing
-=======
-    // Update table input text
->>>>>>> 149f5ef73a00aaa0d816068ff78b7454861c8214
     document.addEventListener("input", debounce(e =>{
         if(e.target.matches("td")) {
             const newText = e.target.innerText;
