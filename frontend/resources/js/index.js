@@ -9,11 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     calcTotalLists()
 
+
     fetch(USERS_URL)
         .then((res) => res.json())
         .then((json) => {
             current_user = json[0];
             getUserData(current_user)
+            displayNavChart()
         })
 
     // Add new list
@@ -31,9 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 "budget": 0.00
             })
         }).then(resp => resp.json()).then(json => {
-            console.log(json)
             renderCardList(json)
-        }).then(calcTotalList())
+            calcTotalLists()
+        })
     })
 
     // Add Table Item
@@ -49,7 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
             deleteListItem(tr, e.target)
         }
     })
+<<<<<<< HEAD
 //editing
+=======
+>>>>>>> 84f700e76730b3af18aaa3536dfd3a8a35e55668
     const debounce = (fn, delay) => {
         let timeoutID;
         return function(...args) {
@@ -61,7 +66,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }, delay)
         }
     }
+<<<<<<< HEAD
 //see if the person is typing
+=======
+    // Update table input text
+>>>>>>> 84f700e76730b3af18aaa3536dfd3a8a35e55668
     document.addEventListener("input", debounce(e =>{
         if(e.target.matches("td")) {
             const newText = e.target.innerText;
@@ -83,6 +92,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+function displayNavChart() {
+    const ctx = document.getElementById('nav-chart');
+    let allLists = [];
+    let listsTotals = [];
+
+    current_user.lists.forEach(list=> {
+        allLists.push(list.category)
+        listsTotals.push(list.total)
+    });
+
+    const myChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: allLists,
+            datasets: [{
+                label: 'Spendings',
+                data: listsTotals,
+                backgroundColor: [
+                    'rgba(255, 99, 132)',
+                    'rgba(54, 162, 235)',
+                    'rgba(255, 206, 86)',
+                    'rgba(75, 192, 192)',
+                    'rgba(153, 102, 255)',
+                    'rgba(255, 159, 64)'
+                ]
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    barPercentage: 0.1,
+                    gridLines: {
+                        display: true
+                    }
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: true
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        max: 1000,
+                        min: 0,
+                        stepSize: 250
+                    }
+                }]
+            },
+            legend : {
+                labels : {
+                  fontColor : '#ffffff'  
+                }
+            }
+        }
+    });
+}
+
 function calcTotalLists() {
     fetch(USERS_URL)
         .then(resp => resp.json())
@@ -90,7 +155,6 @@ function calcTotalLists() {
             let totalLists = 0;
             json.forEach(user => {
                 totalLists = user.lists.length
-                console.log(totalLists)
             })
             document.querySelector("#all-lists").innerText=`Total Lists: ${totalLists}`;
         })
@@ -108,7 +172,7 @@ function calcTotalSpent() {
                     })
                 })  
             })
-            document.querySelector("#all-total").innerText=`Total Spent: $${total}`;
+            document.querySelector("#all-total").innerText=`Total Spent: $${total.toFixed(2)}`;
         })   
 }
 
@@ -120,6 +184,7 @@ function getUserData(userData) {
 }
 
 function renderCardList(list) {
+    Chart.defaults.global.defaultFontColor = "#b0aeaf";
     const dashboard = document.querySelector("#dashboard-content > .container");
     const cardContainer = document.createElement('div');
 
@@ -136,7 +201,7 @@ function renderCardList(list) {
                         <div class="col-lg-6">
                             <div class="card-list-header">
                                 <h3 id="list-name" contenteditable="true">${list.category}</h3>
-                                <h3> Budget: $<span id="list-budget" contenteditable="true">${list.budget}</span></h3>
+                                <h3> Budget: $<span id="list-budget" contenteditable="true">${list.budget.toFixed(2)}</span></h3>
                             </div>
                             <table class="table table-hover">
                                 <thead>
@@ -170,12 +235,12 @@ function renderCardList(list) {
     `;
 
     const listDeleteBtn = cardContainer.querySelector("#list-delete-btn");
-    listDeleteBtn.addEventListener("click", () => deleteListCard(cardContainer, listDeleteBtn));
+    listDeleteBtn.addEventListener("click", () => deleteListModal(cardContainer, listDeleteBtn));
     let total = 0.0;
     
     list.expenditures.forEach(expenditure => {
         total += expenditure.price;
-        cardContainer.querySelector("#totalPrice").innerText =`Price: $${total}`;
+        cardContainer.querySelector("#totalPrice").innerText =`Price: $${total.toFixed(2)}`;
 
         const tableBody = cardContainer.querySelector("#table-body")
         const tr = document.createElement("tr");
@@ -206,8 +271,19 @@ function renderCardList(list) {
     });
 
     renderChart(list, cardContainer)
-
+    pushTotalToBack(list, total)
     dashboard.appendChild(cardContainer);
+}
+
+function pushTotalToBack(list, total) {
+    fetch(`${LISTS_URL}/${list.id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify({"total": total})
+    })
 }
 
 function updateListBudget(id, newBudget){
@@ -250,7 +326,7 @@ function updateItem(newText, item) {
             Accept: "application/json"
         },
         body: JSON.stringify(itemUpdate)
-    })
+    }).then(displayNavChart()).then(calcTotalSpent())
 }
 
 
@@ -294,7 +370,6 @@ function addNewItem(btn){
 
 function deleteListItem(item, btn) {
     const id = btn.getAttribute("item-id")
-    // console.log(id)
     item.remove();
 
     fetch(`${EXPEND_URL}/${id}`, {
@@ -304,6 +379,23 @@ function deleteListItem(item, btn) {
             "Accept": "application/json"
         }
     }).then(calcTotalSpent())
+}
+
+function deleteListModal(list, btn) {
+    const modalBg = document.querySelector('.modal-bg');
+    const modalCloseBtn = document.querySelector(".modal-close-btn");
+    const modalContinueBtn = document.querySelector(".modal-continue-btn")
+
+    modalBg.classList.add("modal-bg-active")
+
+    modalCloseBtn.addEventListener("click", () => {
+        modalBg.classList.remove("modal-bg-active")
+    });
+
+    modalContinueBtn.addEventListener("click", () => {
+        deleteListCard(list, btn)
+        modalBg.classList.remove("modal-bg-active")
+    })
 }
 
 function deleteListCard(list, btn) {
@@ -316,7 +408,7 @@ function deleteListCard(list, btn) {
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
-    }).then(calcTotalList())
+    }).then(()  => calcTotalLists())
 }
 
 function renderChart(list, cardContainer) {
